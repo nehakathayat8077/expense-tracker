@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { useAuth } from "../context/AuthContext"
 import Navbar from "../components/Navbar"
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts"
 
 function Dashboard() {
   const { user } = useAuth()
@@ -102,6 +103,22 @@ function Dashboard() {
     .filter((t) => t.type === "expense")
     .reduce((acc, t) => acc + t.amount, 0)
 
+  const pieData = [
+  { name: "Income", value: income },
+  { name: "Expense", value: expense }
+]
+
+const COLORS = ["#4ade80", "#f87171"]
+
+const categoryData = transactions.reduce((acc, t) => {
+  const existing = acc.find((item) => item.name === t.category)
+  if (existing) {
+    existing.value += t.amount
+  } else {
+    acc.push({ name: t.category, value: t.amount })
+  }
+  return acc
+}, [])
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <Navbar />
@@ -295,6 +312,51 @@ function Dashboard() {
           )}
           
         </div>
+
+        {/* Charts */}
+{transactions.length > 0 && (
+  <div className="grid grid-cols-2 gap-4 mt-8">
+
+    {/* Pie Chart */}
+    <div className="bg-gray-800 rounded-2xl p-6">
+      <h2 className="text-xl font-bold mb-4">Income vs Expense</h2>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie
+            data={pieData}
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            dataKey="value"
+            label={({ name, percent }) =>
+              `${name} ${(percent * 100).toFixed(0)}%`
+            }
+          >
+            {pieData.map((entry, index) => (
+              <Cell key={index} fill={COLORS[index]} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+
+    {/* Bar Chart */}
+    <div className="bg-gray-800 rounded-2xl p-6">
+      <h2 className="text-xl font-bold mb-4">Category Breakdown</h2>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={categoryData}>
+          <XAxis dataKey="name" stroke="#9ca3af" />
+          <YAxis stroke="#9ca3af" />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="value" fill="#60a5fa" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+
+  </div>
+)}
       </div>
     </div>
   )
