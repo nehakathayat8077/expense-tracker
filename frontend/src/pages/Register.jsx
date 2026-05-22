@@ -19,7 +19,7 @@ function Register() {
     setError("")
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        "https://expense-tracker-api-9zcq.onrender.com/api/auth/login",
 
         { name,email, password },
         { withCredentials: true }

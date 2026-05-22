@@ -16,7 +16,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(false)
 
   // BASE URL
-  const API_URL = "http://localhost:3000/api/transaction"
+  const API_URL = "https://expense-tracker-api-9zcq.onrender.com/api/transaction"
 
   // Fetch Transactions
     const fetchTransactions = async () => {
