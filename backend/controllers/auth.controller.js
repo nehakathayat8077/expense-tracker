@@ -22,7 +22,11 @@ const register=async(req,res)=>{
          //create token
          const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"})
          //send to cookie
-         res.cookie("token",token)
+         res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // ← this line!
+            sameSite: "strict"
+            })
          //show message
          res.status(201).json({
             message:"user created",

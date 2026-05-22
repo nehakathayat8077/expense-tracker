@@ -30,6 +30,7 @@ app.get('/',(req,res)=>{
 app.use('/api/auth',authRouter)
 app.use('/api/transaction',transactionRouter)
 
-app.listen(3000,()=>{
-    console.log("port 3000 server running")
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
