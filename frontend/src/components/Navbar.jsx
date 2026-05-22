@@ -2,6 +2,10 @@ import React from 'react'
 import { useAuth } from "../context/AuthContext"
 const Navbar = () => {
   const { user, logout } = useAuth()
+   const handleLogout = () => {
+    logout()
+    navigate("/")
+  }
   return (
 
     <div>
@@ -15,8 +19,8 @@ const Navbar = () => {
           <span>Hi, {user?.name || "User"}</span>
 
           <button
-            onClick={logout}
-            className="bg-red-600 px-4 py-2 rounded"
+            onClick={()=>{handleLogout}}
+            className="bg-red-600 px-4 py-2 rounded hover:bg-red-500"
           >
             Logout
           </button>

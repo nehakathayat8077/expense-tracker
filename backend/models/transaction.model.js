@@ -21,7 +21,7 @@ const transactionSceham = new mongoose.Schema({
     },
     category:{
         type:String,
-        requred:true
+        required:true
         
     }
 },{timestamps:true})
