@@ -24,8 +24,8 @@ const register=async(req,res)=>{
          //send to cookie
          res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production", // ← this line!
-            sameSite: "strict"
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "none"
             })
          //show message
          res.status(201).json({
@@ -45,42 +45,52 @@ const register=async(req,res)=>{
    
 
 }
-const login=async(req,res)=>{
-    try{
-        const {email,password}= req.body
-        const user = await userModel.findOne({
-            email
-        })
-        //if user is not found
-        if(!user){
-            return res.status(402).json({
-                message:"user with this email no found"
-            })
-        }
-        //if found 
-        //compare the passwords
-        const isMatch = await bcryptjs.compare(password, user.password)
-        if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" })
-        }
-        //if password matched
-        const token = jwt .sign(
-            {id:user._id },
-            process.env.JWT_SECRET,
-            {expiresIn:'7d'}
-        )
-        //pass token to cookie
-        res.cookie("token",token)
-        res.status(200).json({
-            user: { id: user._id, name: user.name }
-            })
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
 
-    }catch(err){
-        return res.status(500).json({
-            message:"some error occured"
-        })
+    const user = await userModel.findOne({ email })
+
+    if (!user) {
+      return res.status(400).json({
+        message: "user not found"
+      })
     }
 
+    const isMatch = await bcryptjs.compare(password, user.password)
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid credentials"
+      })
+    }
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none"
+    })
+
+    res.status(200).json({
+      message: "login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    })
+
+  } catch (err) {
+    return res.status(500).json({
+      message: "some error occurred"
+    })
+  }
 }
 
 const logOut=(req,res)=>{
